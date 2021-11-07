@@ -1,43 +1,57 @@
 ## Filmow Scraper
 
-Um web scraper desenvolvido em Go para salvar todos os filmes e s�ries marcados como assistidos no [link] filmow em um (csv ou sqlite ?)
+Um web scraper desenvolvido em Go para salvar todos os filmes e séries marcados como assistidos no [Filmow](https://filmow.com/).
 
+A motivação é tanto a falta desta funcionalidade de maneira nativa quanto a falta de uma API oficial.
 
-### Utiliza��o
+### Modus Operandi
 
-Intalar go
+O primeiro passo é obter todos os filmes e séries vistos pelo usuário, através da `<ul>` com ID `movies-list`.
 
-Instalar biblioteca de scraping ?
+Isso é feito pelo colly, tomando como base as URLs `https://filmow.com/usuario/%USERNAME%/filmes/ja-vi/` e `https://filmow.com/usuario/%USERNAME%/series/ja-vi/`, e visitando todas as páginas de filmes ou séries assistidas a partir de ambas.
 
-Rodar o c�digo
+Para cada item da lista acima iremos salvar o `data-movie-pk` correspondente, que será utilizado no endpoint `https://filmow.com/async/tooltip/movie/?movie_pk=` para obter informações.
 
+O procedimento é o mesmo tanto para filmes quanto para séries.
 
+### Utilização
 
-### Todo
+- Instalar Go
 
-- argv com nome de usuario
+- Instalar framework goColly
+	- `go get github.com/gocolly/colly`
 
-- paralelizar ?
-- goroutines ?
+- Executar o script `run.sh`
 
-- sort movies by name
-- titulos em portugues
+### Saída
 
-- go mod file
+A saída do programa é uma tabela no formato CSV com as seguintes colunas:
 
-while pag == 200
-go parallel while
+- Nome Traduzido
+- Nome Original
+- Ano
+- Nota Filmow
 
-https://filmow.com/async/tooltip/movie/?movie_pk=
-data-movie-pk
+### Trabalhos Relacionados
 
+A aplicação foi inspirada e baseada nos seguintes trabalhos:
 
-- colly ou goQuery ?
+- https://github.com/pauloralves/filmow_to_letterboxd_csv
 
-https://github.com/gocolly/colly/tree/master/_examples
-https://itnext.io/create-your-first-web-scraper-in-go-with-goquery-2dcd45743165
-https://medium.com/@riquellopes/how-to-write-your-first-web-scraper-in-go-386a1dcac36d
+- https://github.com/larissamoreira/filmow_to_letterboxd
 
-https://github.com/pauloralves/filmow_to_letterboxd_csv
-https://github.com/alvarofpp/imd0105-web-scraping-cinemas-natal
-https://github.com/larissamoreira/filmow_to_letterboxd
+- https://github.com/alvarofpp/imd0105-web-scraping-cinemas-natal
+
+### ToDo
+
+- salvar Nota IMDB ?
+
+- salvar em csv, sqlite ou html ?
+
+- paralelizar (goroutines) ou async ?
+
+- sort movies by name ?
+
+- pegar todos os diretores
+
+- problema com ano
