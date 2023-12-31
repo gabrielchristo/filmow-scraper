@@ -11,6 +11,7 @@ type Movie struct {
 	director string
 	year string
 	rate string
+	comments string
 }
 
 var movies []Movie
@@ -19,7 +20,7 @@ var movies []Movie
 	@description: Creates movie object with given data
 	@return: movie object
 */
-func CreateMovie(id int, title string, title_orig string, director string, year string, rate string) *Movie {
+func CreateMovie(id int, title string, title_orig string, director string, year string, rate string, comments string) *Movie {
 
 	m := Movie{}
 	m.id = id
@@ -28,6 +29,7 @@ func CreateMovie(id int, title string, title_orig string, director string, year 
 	m.director = director
 	m.year = year
 	m.rate = rate
+	m.comments = comments
 
 	return &m
 }
@@ -60,9 +62,9 @@ func GetMovieByID(id int) *Movie {
 	@description: print all movies at array
 */
 func ShowAllMovies() {
-	fmt.Println("filmow_id, title, original_title, director, year, filmow_rate")
+	fmt.Println("filmow_id, title, original_title, comments, year, filmow_rate, director")
 	for _, movie := range movies {
-		output := fmt.Sprintf("%d, %s, %s, %s, %s, %s", movie.id, movie.title, movie.title_orig, movie.director, movie.year, movie.rate)
+		output := fmt.Sprintf("%d, %s, %s, %s, %s, %s, %s", movie.id, movie.title, movie.title_orig, movie.comments, movie.year, movie.rate, movie.director)
 		fmt.Println(output)
 	}
 }
@@ -71,10 +73,10 @@ func ShowAllMovies() {
 	@description: print all movies with a given order
 */
 func ShowAllMoviesInOrder(idArray []int) {
-	fmt.Println("filmow_id, title, original_title, director, year, filmow_rate")
+	fmt.Println("filmow_id, title, original_title, comments, year, filmow_rate, director")
 	for _, id := range idArray {
 		movie := GetMovieByID(id)
-		output := fmt.Sprintf("%d, %s, %s, %s, %s, %s", movie.id, movie.title, movie.title_orig, movie.director, movie.year, movie.rate)
+		output := fmt.Sprintf("%d, %s, %s, %s, %s, %s, %s", movie.id, movie.title, movie.title_orig, movie.comments, movie.year, movie.rate, movie.director)
 		fmt.Println(output)
 	}
 }

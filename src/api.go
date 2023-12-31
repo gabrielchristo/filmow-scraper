@@ -19,7 +19,7 @@ const movieAPI string = "https://filmow.com/async/tooltip/movie/?movie_pk="
 	@param id: movie ID from filmow
 	@return: created movie structure
 */
-func Parse(id int, wg *sync.WaitGroup) *Movie {
+func Parse(id int, comments string, wg *sync.WaitGroup) *Movie {
 
 	response, err := http.Get(movieAPI + strconv.Itoa(id))
 	
@@ -42,7 +42,7 @@ func Parse(id int, wg *sync.WaitGroup) *Movie {
 		movieKey := jsonResponse["movie"].(map[string]interface{})
 		htmlKey := jsonResponse["html"].(string)
 
-		newMovie := CreateMovie(id, GetTitle(movieKey), GetOriginalTitle(movieKey), GetDirector(htmlKey), GetYear(htmlKey), GetRate(htmlKey))
+		newMovie := CreateMovie(id, GetTitle(movieKey), GetOriginalTitle(movieKey), GetDirector(htmlKey), GetYear(htmlKey), GetRate(htmlKey), comments)
 
 		// add to movies array
 		AddMovie(newMovie)
@@ -109,14 +109,20 @@ func GetDirector(html string) string {
 	exp, _ := regexp.Compile("Diretor:</b> (<a.*\">.*</a>)*")
 	temp := exp.FindString(html)
 
-	names, _ := regexp.Compile("\">.*?<")
-	result := names.FindString(temp)
-
-	// as golang regex does not support lookbehind or lookahead, we need to do a static replacement
-	result = strings.Replace(result, "<", ";", -1)
-	result = strings.Replace(result, "\">", "", -1)
-
+	names, _ := regexp.Compile("\">(.*?)<")
+	result := names.FindAllString(temp, -1)
 	//log.Println(result)
 
-	return result
+	var corrected_list []string
+	for _, director := range result {
+		// as golang regex does not support lookbehind or lookahead, we need to do a static replacement
+		director = strings.Replace(director, "<", "", -1)
+		director = strings.Replace(director, "\">", "", -1)
+		corrected_list = append(corrected_list, director)
+	}
+
+	final := strings.Join(corrected_list, " | ")
+	//log.Println(final)
+
+	return final
 }

@@ -34,9 +34,10 @@ A saída do programa é uma tabela no formato CSV com as seguintes colunas:
 - Filmow ID
 - Nome Traduzido em pt-br
 - Nome Original
-- Diretor
+- Número de comentários
 - Ano
 - Nota Filmow
+- Diretor(es)
 
 ### Trabalhos Relacionados
 
@@ -48,11 +49,7 @@ A aplicação foi inspirada e baseada nos seguintes trabalhos:
 
 ### ToDo
 
-- salvar Nota IMDB ?
+- salvar imdb ID/Nota IMDB ?
 - salvar em csv, sqlite ou html ?
 - sort movies by name ?
 
-- pegar todos os diretores
-- obter numero comentarios, imagem ?
-
-- adicionar imdb ID na planilha ?

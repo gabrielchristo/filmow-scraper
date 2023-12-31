@@ -25,8 +25,8 @@ func main() {
 	var input string
 
 	// get username from command line
-    //fmt.Print("Enter username: ")
-    //fmt.Scanln(&input)
+	//fmt.Print("Enter username: ")
+	//fmt.Scanln(&input)
 
 	// get username from args
 	input = os.Args[1]
@@ -49,11 +49,20 @@ func main() {
 	// callback for movies list
 	c.OnHTML("#movies-list", func(e *colly.HTMLElement) {
 		e.ForEach("li", func(_ int, elem *colly.HTMLElement) {
+			// parse ID
 			id, _ := strconv.Atoi(elem.Attr("data-movie-pk"))
 			moviesIDs = append(moviesIDs, id)
 			//log.Println("Filmow ID", id)
+
+			// parse comments number
+			comments := elem.ChildText(".badge-num-comments")
+			comments = strings.Replace(comments, ",", "", -1)
+			comments = strings.Replace(comments, "K", "00", -1) // 1,8K to 1800
+			//log.Println("Comments for", id, "=", comments)
+			
+			// parsing info from obtained movie ID
 			wg.Add(1)
-			go Parse(id, wg) // parsing info from obtained movie ID
+			go Parse(id, comments, wg)
 		})
 	})
 
