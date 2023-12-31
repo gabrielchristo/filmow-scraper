@@ -111,6 +111,7 @@ func SaveAllMoviesInOrder(idArray []int, username string) {
 		}
 	}
 	WriteToFile(fmt.Sprintf("../output_%s.csv", username), TransformMoviesTo2DSlice(new_array))
+	movies = movies[:0] // clear slice
 }
 
 /*

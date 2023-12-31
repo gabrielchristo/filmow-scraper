@@ -11,9 +11,10 @@ import (
 	"strconv"
 )
 
-func UNUSED(x ...interface{}) {} // UNUSED allows unused variables to be included in Go programs
-
-func main() {
+/*
+	@description: filmow scraper init function
+*/
+func search(username string, main_url string) []int {
 
 	// waitgroup var
 	wg := &sync.WaitGroup{}
@@ -21,20 +22,10 @@ func main() {
 	// IDs array
 	var moviesIDs []int
 
-	// filmow username
-	var input string
-
-	// get username from command line
-	//fmt.Print("Enter username: ")
-	//fmt.Scanln(&input)
-
-	// get username from args
-	input = os.Args[1]
-
 	// update filmow URLs with user
 	//moviesURL := strings.Replace("https://filmow.com/usuario/USERNAME/filmes/ja-vi/", "USERNAME", input, -1)
 	//showsURL := strings.Replace("https://filmow.com/usuario/USERNAME/series/ja-vi/", "USERNAME", input, -1)
-	allURL := strings.Replace("https://filmow.com/usuario/USERNAME/ja-vi/", "USERNAME", input, -1)
+	allURL := strings.Replace(main_url, "USERNAME", username, -1)
 
 	// create collector
 	c := colly.NewCollector(
@@ -70,8 +61,6 @@ func main() {
 		})
 	})
 
-	// callback for shows list ?
-
 	// callback for next movies page
 	c.OnHTML(".pagination-centered", func(e *colly.HTMLElement) {
 		e.ForEach("a[href]", func(_ int, elem *colly.HTMLElement) {
@@ -83,8 +72,6 @@ func main() {
 		})
 	})
 
-	// callback for next shows page ?
-
 	// visit main URLs
 	//c.Visit(moviesURL)
 	//c.Visit(showsURL)
@@ -94,10 +81,34 @@ func main() {
 	c.Wait()
 	wg.Wait()
 
-	// show or save movies
-	log.Println("Movie IDs Count", len(moviesIDs))
+	return moviesIDs
+}
+
+/*
+	@description: entrypoint function
+*/
+func main() {
+
+	// filmow username
+	var input string
+
+	// get username from command line
+	//fmt.Print("Enter username: ")
+	//fmt.Scanln(&input)
+
+	// get username from args
+	input = os.Args[1]
+
+	// show or save watched movies
+	watched := search(input, "https://filmow.com/usuario/USERNAME/ja-vi/")
+	log.Println("Watched Movies ID Count", len(watched))
 	//ShowAllMovies()
 	//ShowAllMoviesInOrder(moviesIDs)
 	//SaveAllMovies(input)
-	SaveAllMoviesInOrder(moviesIDs, input)
+	SaveAllMoviesInOrder(watched, input + "_watched")
+	
+	// show or save want to watch movies
+	want_to_watch := search(input, "https://filmow.com/usuario/USERNAME/quero-ver/")
+	log.Println("Want to Watch Movies ID Count", len(want_to_watch))
+	SaveAllMoviesInOrder(want_to_watch, input + "_want_to_watch")
 }

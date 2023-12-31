@@ -1,6 +1,6 @@
 # Filmow Scraper
 
-Um web scraper desenvolvido em Go para salvar todos os filmes e séries marcados como assistidos no [Filmow](https://filmow.com/).
+Um web scraper desenvolvido em Go para salvar todos os filmes e séries marcados como `Já vi` ou `Quero ver` no [Filmow](https://filmow.com/).
 
 A motivação é tanto a falta desta funcionalidade de maneira nativa quanto a falta de uma API oficial.
 
@@ -43,13 +43,14 @@ A saída do programa é uma tabela no formato CSV com as seguintes colunas:
 
 A aplicação foi inspirada e baseada nos seguintes trabalhos:
 
-- https://github.com/pauloralves/filmow_to_letterboxd_csv
-- https://github.com/larissamoreira/filmow_to_letterboxd
-- https://github.com/alvarofpp/imd0105-web-scraping-cinemas-natal
+- [Filmow to Letterboxd (Ruby)](https://github.com/pauloralves/filmow_to_letterboxd_csv)
+- [Filmow to Letterboxd (Python)](https://github.com/larissamoreira/filmow_to_letterboxd)
+- [Web Scraping Cinema](https://github.com/alvarofpp/imd0105-web-scraping-cinemas-natal)
 
 ### ToDo
 
+- salvar user_rate
 - salvar imdb ID/Nota IMDB ?
-- salvar em csv, sqlite ou html ?
+- salvar html ?
 - sort movies by name ?
 
