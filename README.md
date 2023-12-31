@@ -1,4 +1,4 @@
-## Filmow Scraper
+# Filmow Scraper
 
 Um web scraper desenvolvido em Go para salvar todos os filmes e séries marcados como assistidos no [Filmow](https://filmow.com/).
 
@@ -18,17 +18,23 @@ O procedimento é o mesmo tanto para filmes quanto para séries.
 
 - Instalar Go
 
-- Instalar framework goColly
+- Clonar repositório
+	- `git clone https://github.com/gabrielchristo/filmow-scraper.git`
+
+- Instalar framework [goColly](https://github.com/gocolly/colly)
 	- `go get github.com/gocolly/colly`
 
-- Executar o script `run.sh`
+- Executar o script `run.sh` com o nome de usuário como argumento
+	- `./run.sh nome_de_usuario`
 
 ### Saída
 
 A saída do programa é uma tabela no formato CSV com as seguintes colunas:
 
-- Nome Traduzido
+- Filmow ID
+- Nome Traduzido em pt-br
 - Nome Original
+- Diretor
 - Ano
 - Nota Filmow
 
@@ -37,21 +43,16 @@ A saída do programa é uma tabela no formato CSV com as seguintes colunas:
 A aplicação foi inspirada e baseada nos seguintes trabalhos:
 
 - https://github.com/pauloralves/filmow_to_letterboxd_csv
-
 - https://github.com/larissamoreira/filmow_to_letterboxd
-
 - https://github.com/alvarofpp/imd0105-web-scraping-cinemas-natal
 
 ### ToDo
 
 - salvar Nota IMDB ?
-
 - salvar em csv, sqlite ou html ?
-
-- paralelizar (goroutines) ou async ?
-
 - sort movies by name ?
 
 - pegar todos os diretores
+- obter numero comentarios, imagem ?
 
-- problema com ano
+- adicionar imdb ID na planilha ?

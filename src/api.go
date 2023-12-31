@@ -8,6 +8,7 @@ import (
 	"log"
 	"regexp"
 	"strings"
+	"sync"
 )
 
 // base URL for movie info API
@@ -18,7 +19,7 @@ const movieAPI string = "https://filmow.com/async/tooltip/movie/?movie_pk="
 	@param id: movie ID from filmow
 	@return: created movie structure
 */
-func Parse(id int) *Movie {
+func Parse(id int, wg *sync.WaitGroup) *Movie {
 
 	response, err := http.Get(movieAPI + strconv.Itoa(id))
 	
@@ -27,6 +28,7 @@ func Parse(id int) *Movie {
 	}
 
 	defer response.Body.Close() // closing until function end
+	defer wg.Done()
 	
 	var jsonResponse map[string]interface{}
 
@@ -51,36 +53,58 @@ func Parse(id int) *Movie {
 	return nil
 }
 
+/*
+
+*/
 func GetTitle(json map[string]interface{}) string {
 	title := json["title"].(string)
 	return strings.Replace(title, ",", " ", -1)
 }
 
+/*
+
+*/
 func GetOriginalTitle(json map[string]interface{}) string {
 	title := json["title_orig"].(string)
 	return strings.Replace(title, ",", " ", -1)
 }
 
+
+/*
+
+*/
 func GetRate(html string) string {
 	exp, _ := regexp.Compile("Nota: (.*?) estrela")
 	result := exp.FindString(html)
 	//log.Println("Match for rate regex:", result, result[6:9])
 
-	return strings.Replace(result[6:9], ",", ".", -1)
+	return strings.Replace(result[6:9], ",", ".", -1) // point as decimal separator to avoid CSV problems
 }
 
+/*
+
+*/
 func GetYear(html string) string {
-	exp, _ := regexp.Compile("Lançamento Mundial: </b>[0-9]*")
+	exp, _ := regexp.Compile("Mundial: </b>[0-9].*\n\t")
 	result := exp.FindString(html)
-	//log.Println("Match for year regex:", result, result[25:29])
+	//log.Println("Partial match for year regex:", result)
 
-	if len(result) < 30 {
-		return ""
-	} else {
-		return result[25:29]
+	split1 := strings.Split(result, "</b>")
+	if len(split1) < 2 {
+		return "Sem informação"
 	}
+
+	split2 := strings.Split(split1[1], "\n")
+	if len(split2) < 1 {
+		return "Sem informação"
+	}
+	//log.Println("Match for year regex:", split2[0])
+	return split2[0]
 }
 
+/*
+
+*/
 func GetDirector(html string) string {
 	exp, _ := regexp.Compile("Diretor:</b> (<a.*\">.*</a>)*")
 	temp := exp.FindString(html)
@@ -88,7 +112,7 @@ func GetDirector(html string) string {
 	names, _ := regexp.Compile("\">.*?<")
 	result := names.FindString(temp)
 
-	// as goland regex does not support lookbehind, we need to do a static replacement
+	// as golang regex does not support lookbehind or lookahead, we need to do a static replacement
 	result = strings.Replace(result, "<", ";", -1)
 	result = strings.Replace(result, "\">", "", -1)
 

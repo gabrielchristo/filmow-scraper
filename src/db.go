@@ -60,9 +60,28 @@ func GetMovieByID(id int) *Movie {
 	@description: print all movies at array
 */
 func ShowAllMovies() {
-	fmt.Println("title, original title, director, year, rate")
+	fmt.Println("filmow_id, title, original_title, director, year, filmow_rate")
 	for _, movie := range movies {
-		output := fmt.Sprintf("%s, %s, %s, %s, %s", movie.title, movie.title_orig, movie.director, movie.year, movie.rate)
+		output := fmt.Sprintf("%d, %s, %s, %s, %s, %s", movie.id, movie.title, movie.title_orig, movie.director, movie.year, movie.rate)
 		fmt.Println(output)
 	}
+}
+
+/*
+	@description: print all movies with a given order
+*/
+func ShowAllMoviesInOrder(idArray []int) {
+	fmt.Println("filmow_id, title, original_title, director, year, filmow_rate")
+	for _, id := range idArray {
+		movie := GetMovieByID(id)
+		output := fmt.Sprintf("%d, %s, %s, %s, %s, %s", movie.id, movie.title, movie.title_orig, movie.director, movie.year, movie.rate)
+		fmt.Println(output)
+	}
+}
+
+/*
+	@description: return movie count in array
+*/
+func MovieCount() int {
+	return len(movies)
 }
