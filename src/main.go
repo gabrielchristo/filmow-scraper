@@ -4,7 +4,7 @@ import (
 	_ "fmt"
 	"os"
 	//"flag"
-	//"log"
+	"log"
 	"sync"
 	"github.com/gocolly/colly"
 	"strings"
@@ -43,7 +43,7 @@ func main() {
 	)
 
 	c.OnResponse(func(r *colly.Response) {
-		//log.Println("Visited", r.Request.URL)
+		log.Println("Visited", r.Request.URL)
 	})
 
 	// callback for movies list
@@ -51,6 +51,10 @@ func main() {
 		e.ForEach("li", func(_ int, elem *colly.HTMLElement) {
 			// parse ID
 			id, _ := strconv.Atoi(elem.Attr("data-movie-pk"))
+			if SliceContains(moviesIDs, id) {
+				//log.Println("movie ID", id, "already in list")
+				return // skip duplicates
+			}
 			moviesIDs = append(moviesIDs, id)
 			//log.Println("Filmow ID", id)
 
@@ -72,7 +76,8 @@ func main() {
 	c.OnHTML(".pagination-centered", func(e *colly.HTMLElement) {
 		e.ForEach("a[href]", func(_ int, elem *colly.HTMLElement) {
 			newPage := elem.Attr("href")
-			if !strings.Contains(newPage, "pagina=1") { // skip first page to avoid duplicates
+			//log.Println("New page", newPage)
+			if !strings.Contains(newPage, "filmes") { // avoid visit "filmes" url workaround, colly bug?
 				c.Visit(e.Request.AbsoluteURL(newPage))
 			}
 		})
@@ -89,7 +94,10 @@ func main() {
 	c.Wait()
 	wg.Wait()
 
-	// show all movies
-	//log.Println("Movie Count", len(moviesIDs))
-	ShowAllMoviesInOrder(moviesIDs)
+	// show or save movies
+	log.Println("Movie IDs Count", len(moviesIDs))
+	//ShowAllMovies()
+	//ShowAllMoviesInOrder(moviesIDs)
+	//SaveAllMovies(input)
+	SaveAllMoviesInOrder(moviesIDs, input)
 }

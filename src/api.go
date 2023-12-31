@@ -53,6 +53,28 @@ func Parse(id int, comments string, wg *sync.WaitGroup) *Movie {
 	return nil
 }
 
+func SimpleParse(id int) *Movie {
+	log.Println("New api call for ID", id)
+	response, err := http.Get(movieAPI + strconv.Itoa(id))
+	if err != nil {
+		log.Println(err)
+	}
+	defer response.Body.Close() // closing until function end
+	var jsonResponse map[string]interface{}
+	if response.StatusCode == 200 { // ok
+		bodyText, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			log.Println(err)
+		}
+		json.Unmarshal([]byte(bodyText), &jsonResponse)
+		movieKey := jsonResponse["movie"].(map[string]interface{})
+		htmlKey := jsonResponse["html"].(string)
+		newMovie := CreateMovie(id, GetTitle(movieKey), GetOriginalTitle(movieKey), GetDirector(htmlKey), GetYear(htmlKey), GetRate(htmlKey), "Sem informação")
+		return newMovie
+	}
+	return nil
+}
+
 /*
 
 */
@@ -112,6 +134,10 @@ func GetDirector(html string) string {
 	names, _ := regexp.Compile("\">(.*?)<")
 	result := names.FindAllString(temp, -1)
 	//log.Println(result)
+
+	if len(result) < 1 {
+		return "Sem informação"
+	}
 
 	var corrected_list []string
 	for _, director := range result {
